@@ -1,10 +1,35 @@
 # ResQ-AI
 
+[![Portal](https://img.shields.io/website?url=https%3A%2F%2Fdqk2eev1ghqhn.cloudfront.net%2F&label=portal&up_message=online&down_message=offline)](https://dqk2eev1ghqhn.cloudfront.net/)
+[![API](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdqk2eev1ghqhn.cloudfront.net%2Fhealthz&query=%24.status&label=API&color=brightgreen)](https://dqk2eev1ghqhn.cloudfront.net/healthz)
+[![Chat on WhatsApp](https://img.shields.io/badge/chat-%2B92%20321%202164421-25D366?logo=whatsapp&logoColor=white)](https://wa.me/923212164421)
+[![Demo video](https://img.shields.io/badge/demo-watch%20on%20YouTube-FF0000?logo=youtube&logoColor=white)](https://youtu.be/SiEbjOteNJ8)
+[![Devpost](https://img.shields.io/badge/AWS%20CDS%20Agentic%20AI-hackathon-003E54?logo=devpost&logoColor=white)](https://aws-cds-partner.devpost.com/)
+[![License](https://img.shields.io/github/license/amaanx86/resq-ai)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/amaanx86/resq-ai)](https://github.com/amaanx86/resq-ai/commits/main)
+
+[![WhatsApp](https://img.shields.io/badge/AWS%20End%20User%20Messaging-WhatsApp-25D366?logo=whatsapp&logoColor=white&labelColor=232F3E)](#where-end-user-messaging-social-fits-in)
+[![Bedrock AgentCore](https://img.shields.io/badge/Amazon%20Bedrock-AgentCore-FF9900?labelColor=232F3E)](#how-it-works)
+[![Strands Agents](https://img.shields.io/badge/Strands-Agents-FF9900?labelColor=232F3E)](https://strandsagents.com/)
+[![Amazon Connect](https://img.shields.io/badge/Amazon%20Connect-voice%20calls-FF9900?labelColor=232F3E)](#how-it-works)
+[![Amazon Transcribe](https://img.shields.io/badge/Amazon%20Transcribe-Urdu%20%7C%20Hindi%20%7C%20English-FF9900?labelColor=232F3E)](#how-it-works)
+
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-06B6D4?logo=tailwindcss&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-%E2%89%A5%201.10-844FBA?logo=terraform&logoColor=white)
+
 Emergency help over WhatsApp, in Urdu, Hindi and English. We built it for the AWS Communication Developer Services (CDS) Agentic AI Partner Hackathon.
 
 Live portal: <https://dqk2eev1ghqhn.cloudfront.net/> (doctors and admins sign in with Cognito)
 
 API health check: <https://dqk2eev1ghqhn.cloudfront.net/healthz>
+
+Demo video (3 minutes): <https://youtu.be/SiEbjOteNJ8>
+
+Try it on WhatsApp: message **+92 321 2164421** (<https://wa.me/923212164421>). Say hi, register an emergency contact in your own words, then describe an emergency in Urdu, Hindi or English, typed or as a voice note.
 
 ## Why we built this
 
