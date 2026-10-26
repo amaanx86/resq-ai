@@ -1,0 +1,146 @@
+services:
+  # =====================================================================
+  # 1. Floci: High-Performance AWS Local Cloud Emulator
+  # Drop-in replacement for LocalStack running native Quarkus binary (~13MB idle)
+  # Emulates DynamoDB (in-process + GSIs), S3 (in-process), SQS, SNS, and IAM
+  # =====================================================================
+  floci:
+    image: floci/floci:latest
+    container_name: resq-floci
+    restart: unless-stopped
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb,s3,sqs,sns,iam
+      - FLOCI_SERVICES_IAM_ENFORCEMENT_ENABLED=false
+    volumes:
+      - floci_data:/app/data
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/4566"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  # =====================================================================
+  # 2. ResQ-AI Backend API: portal REST, WhatsApp webhook (enqueue only),
+  # WebSocket bridge, video join. Connects to Floci at http://floci:4566
+  # for DynamoDB, S3, SQS (inbound queue) and SNS (portal events fan-out)
+  # =====================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: resq-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=local-floci
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ENDPOINT_URL=http://floci:4566
+      - MOCK_AWS=False
+      - DYNAMODB_TABLE_NAME=ResQTable
+      - S3_AUDIO_BUCKET=resq-raw-audio-vault
+      - BEDROCK_MODEL_ID=anthropic.claude-5-5-sonnet-2026
+      - BEDROCK_FALLBACK_MODEL_ID=amazon.nova-pro-v1:0
+      - PORTAL_BASE_URL=http://localhost:5173
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID:-}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN:-}
+      - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN:-resq_local_verify_token}
+      - WHATSAPP_PROVIDER=${WHATSAPP_PROVIDER:-meta}
+      - CONNECT_INSTANCE_ID=00000000-0000-0000-0000-000000000000
+      - CONNECT_FLOW_ID=00000000-0000-0000-0000-000000000000
+      - CONNECT_SOURCE_PHONE_NUMBER=+18005550199
+      - WHATSAPP_APP_SECRET=${WHATSAPP_APP_SECRET:-}
+      - AGENT_BACKEND=local
+      # Inbound queue (auto-created with its DLQ in Floci) and the portal fan-out topic
+      - WEBHOOK_QUEUE_NAME=resq-webhook-queue
+      - WEBHOOK_DLQ_NAME=resq-webhook-dlq
+      - PORTAL_EVENTS_TOPIC_NAME=resq-portal-events
+      # The API seeds demo doctors/cases; the worker never does
+      - SEED_DEMO_DATA=True
+    depends_on:
+      floci:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # =====================================================================
+  # 3. ResQ-AI Worker: same image, consumes resq-webhook-queue and runs the
+  # pipeline (onboarding / handover routing, speech, triage agent, tools,
+  # case persistence, WhatsApp replies). Publishes portal events to SNS.
+  # =====================================================================
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: resq-worker
+    restart: unless-stopped
+    command: ["python", "-m", "app.worker"]
+    stop_grace_period: 30s
+    environment:
+      - ENVIRONMENT=local-floci
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_ENDPOINT_URL=http://floci:4566
+      - MOCK_AWS=False
+      - DYNAMODB_TABLE_NAME=ResQTable
+      - S3_AUDIO_BUCKET=resq-raw-audio-vault
+      - BEDROCK_MODEL_ID=anthropic.claude-5-5-sonnet-2026
+      - BEDROCK_FALLBACK_MODEL_ID=amazon.nova-pro-v1:0
+      - PORTAL_BASE_URL=http://localhost:5173
+      - WHATSAPP_PHONE_NUMBER_ID=${WHATSAPP_PHONE_NUMBER_ID:-}
+      - WHATSAPP_ACCESS_TOKEN=${WHATSAPP_ACCESS_TOKEN:-}
+      - WHATSAPP_VERIFY_TOKEN=${WHATSAPP_VERIFY_TOKEN:-resq_local_verify_token}
+      - WHATSAPP_PROVIDER=${WHATSAPP_PROVIDER:-meta}
+      - CONNECT_INSTANCE_ID=00000000-0000-0000-0000-000000000000
+      - CONNECT_FLOW_ID=00000000-0000-0000-0000-000000000000
+      - CONNECT_SOURCE_PHONE_NUMBER=+18005550199
+      - AGENT_BACKEND=local
+      - WEBHOOK_QUEUE_NAME=resq-webhook-queue
+      - WEBHOOK_DLQ_NAME=resq-webhook-dlq
+      - PORTAL_EVENTS_TOPIC_NAME=resq-portal-events
+      - SEED_DEMO_DATA=False
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      floci:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    # The image's HEALTHCHECK probes the API port, which the worker doesn't serve
+    healthcheck:
+      disable: true
+
+  # =====================================================================
+  # 4. ResQ-AI Web Portal: React 19 + Vite 6 + Tailwind CSS (via Nginx)
+  # Proxies /api/ and /ws/ to the backend service container
+  # =====================================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: resq-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  floci_data:
+    driver: local

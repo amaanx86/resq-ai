@@ -1,0 +1,44 @@
+[
+  {
+    "name": "alert_emergency_contact",
+    "description": "Phone the patient's registered emergency contact through Amazon Connect (Polly TTS in Urdu/Hindi/English). ESI 1-2 only, once per case. Without contact_phone it returns SKIPPED_NO_CONTACT.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "case_id": {"type": "string", "description": "ResQ case ID."},
+        "esi_level": {"type": "integer", "description": "Structured triage ESI level (1-5). Only 1 and 2 call."},
+        "contact_phone": {"type": "string", "description": "Emergency contact phone, E.164. Omit if none is registered."},
+        "patient_name": {"type": "string", "description": "Patient name."},
+        "emergency_details": {"type": "string", "description": "One plain-language sentence for the family member."},
+        "language": {"type": "string", "description": "Urdu, Hindi or English."}
+      },
+      "required": ["case_id", "esi_level", "patient_name", "emergency_details"]
+    }
+  },
+  {
+    "name": "match_specialist_doctor",
+    "description": "Rank the free on-duty doctors to offer the case to (a doctor already holding a case or an offer is skipped): the required specialty first, then General Emergency, then any active doctor. Assigns nobody: the first doctor to accept the offer takes the case. Returns OFFER_PENDING with candidates, or NO_DOCTOR_AVAILABLE. Once per case when case_id is given.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "required_specialty": {"type": "string", "description": "Cardiology, Neurology, Trauma, Pulmonology or General Emergency."},
+        "patient_phone": {"type": "string", "description": "Patient WhatsApp number, E.164."},
+        "clinical_summary": {"type": "string", "description": "Short clinical summary for the doctor."},
+        "case_id": {"type": "string", "description": "ResQ case ID (makes the ranking idempotent)."}
+      },
+      "required": ["required_specialty", "patient_phone", "clinical_summary"]
+    }
+  },
+  {
+    "name": "generate_video_session",
+    "description": "Create (or reuse) the Amazon Chime SDK video room for a case and return the patient and doctor join links.",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "case_id": {"type": "string", "description": "ResQ case ID."},
+        "doctor_name": {"type": "string", "description": "Name of the doctor joining the call."}
+      },
+      "required": ["case_id", "doctor_name"]
+    }
+  }
+]

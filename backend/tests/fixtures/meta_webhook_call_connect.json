@@ -1,0 +1,42 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "102290129340398",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15550783881",
+              "phone_number_id": "106540352242922"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Ahmed Khan"
+                },
+                "wa_id": "923001234567"
+              }
+            ],
+            "calls": [
+              {
+                "id": "wacid.HBgMOTIzMDAxMjM0NTY3FQIAEhggNjQxRjU5QjQ1QUMyRjM2NUI4RjZGQkZEQkM2MDUA",
+                "to": "15550783881",
+                "from": "923001234567",
+                "event": "connect",
+                "timestamp": "1791716600",
+                "direction": "USER_INITIATED",
+                "session": {
+                  "sdp_type": "offer",
+                  "sdp": "v=0\r\no=- 4611731400430051336 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\nm=audio 9 UDP/TLS/RTP/SAVPF 111\r\nc=IN IP4 0.0.0.0\r\na=rtpmap:111 opus/48000/2\r\n"
+                }
+              }
+            ]
+          },
+          "field": "calls"
+        }
+      ]
+    }
+  ]
+}

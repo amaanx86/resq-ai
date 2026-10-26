@@ -1,0 +1,11 @@
+{
+  "Type": "Notification",
+  "MessageId": "a4c6e3b2-0f7e-5d1c-9b8a-7f6e5d4c3b2a",
+  "TopicArn": "arn:aws:sns:us-east-1:123456789012:resq-whatsapp-inbound-events",
+  "Message": "{\"context\": {\"MetaWabaIds\": [{\"wabaId\": \"102290129340398\", \"arn\": \"arn:aws:social-messaging:us-east-1:123456789012:waba/fb2594b8a7974770b128a409e2example\"}], \"MetaPhoneNumberIds\": [{\"metaPhoneNumberId\": \"106540352242922\", \"arn\": \"arn:aws:social-messaging:us-east-1:123456789012:phone-number-id/976c72a700aac43eaf573ae050example\"}]}, \"whatsAppWebhookEntry\": \"{\\\"id\\\": \\\"102290129340398\\\", \\\"changes\\\": [{\\\"value\\\": {\\\"messaging_product\\\": \\\"whatsapp\\\", \\\"metadata\\\": {\\\"display_phone_number\\\": \\\"15550783881\\\", \\\"phone_number_id\\\": \\\"106540352242922\\\"}, \\\"contacts\\\": [{\\\"profile\\\": {\\\"name\\\": \\\"Ahmed Khan\\\"}, \\\"wa_id\\\": \\\"923001234567\\\"}], \\\"messages\\\": [{\\\"from\\\": \\\"923001234567\\\", \\\"id\\\": \\\"wamid.HBgMOTIzMDAxMjM0NTY3FQIAEhgUM0E4RjcyQjJCMDI1QkU2NzI0QTcA\\\", \\\"timestamp\\\": \\\"1791716400\\\", \\\"type\\\": \\\"audio\\\", \\\"audio\\\": {\\\"mime_type\\\": \\\"audio/ogg; codecs=opus\\\", \\\"sha256\\\": \\\"pHtVjZ1Ua1lN1dZ3b0b0m4GN7sfmB7bWb3MRMrJcE0c=\\\", \\\"id\\\": \\\"1048234539876154\\\", \\\"voice\\\": true}}]}, \\\"field\\\": \\\"messages\\\"}]}\", \"aws_account_id\": \"123456789012\", \"message_timestamp\": \"2026-10-11T11:00:01.271279391Z\", \"messageId\": \"6d69f07a-c317-4278-9d5c-6a84078419ec\"}",
+  "Timestamp": "2026-10-11T11:00:01.512Z",
+  "SignatureVersion": "1",
+  "Signature": "EXAMPLEpH+DcEwjAPg8O9mY8dReBSwksfg2S7WKQcikcNKWLQjwu6A4VbeS0QHVCkhRS7fUQvi2egU3N858fiTDN6bkkOxYDVrY0Ad8L10Hs3zH81mtnPk5uvvolIC1CXGu43obcgFxeL3khZl8IKvO61GWB6jI9b5+gLPoBc1Q=",
+  "SigningCertURL": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-9c6465fa7f48f5cacd23014631ec1136.pem",
+  "UnsubscribeURL": "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:123456789012:resq-whatsapp-inbound-events:2bcfbf39-05c3-41de-beaa-fcfcc21c8f55"
+}

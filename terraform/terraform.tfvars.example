@@ -1,0 +1,110 @@
+# ResQ-AI Terraform Variable Values Example
+# Copy to terraform.tfvars. Never commit real secrets; prefer TF_VAR_whatsapp_* env vars for them.
+
+# ---------------- General ----------------
+aws_region         = "us-east-1"
+environment        = "production"
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+log_retention_days = 30
+ops_alert_emails   = [] # e.g. ["oncall@example.com"]: receives the webhook DLQ alarm (confirm the SNS email)
+
+# ---------------- Amazon Bedrock models (primary + fallback) ----------------
+# Enable both in the Bedrock console for aws_region. If a model is only offered through a
+# cross-region inference profile, use the profile ID (e.g. "us.<model id>").
+bedrock_model_id          = "anthropic.claude-sonnet-5-5"
+bedrock_fallback_model_id = "amazon.nova-pro-v1:0"
+
+# ---------------- Container images ----------------
+# Empty = the ECR repositories this module creates (resq-backend, resq-agentcore-runtime).
+app_container_image       = ""
+backend_image_tag         = "latest"
+agentcore_container_image = ""
+agentcore_image_tag       = "latest"
+ecr_keep_image_count      = 20
+
+# ---------------- ECS (shared) ----------------
+app_port             = 8000
+ecs_cpu_architecture = "ARM64"  # architecture the backend image was built for (GitLab CI builds arm64)
+mock_aws             = false    # must stay false in AWS
+demo_mode            = false
+# Demo doctors/patient/cases on API startup (they show up in analytics as real cases).
+# Default false for production; hackathon demo environments set it to true. The worker never seeds.
+seed_demo_data = false
+
+# ---------------- ECS API service ----------------
+ecs_task_cpu      = 1024
+ecs_task_memory   = 2048
+api_desired_count = 2
+api_min_capacity  = 2
+api_max_capacity  = 10
+auth_enabled      = true
+
+# ---------------- ECS worker service ----------------
+worker_task_cpu                  = 1024
+worker_task_memory               = 2048
+worker_min_capacity              = 1
+worker_max_capacity              = 10
+worker_scale_out_queue_depth     = 10
+transcribe_timeout_seconds       = 60
+transcribe_poll_interval_seconds = 2
+
+# ---------------- Inbound queue ----------------
+webhook_queue_visibility_timeout = 300
+webhook_queue_max_receive_count  = 5
+
+# ---------------- WhatsApp ----------------
+whatsapp_provider          = "eum_social" # "meta" only to roll back to the Meta Cloud API
+whatsapp_api_version       = "v20.0"
+eum_social_phone_number_id = "phone-number-id-REPLACE_ME" # REQUIRED for eum_social (End User Messaging Social console)
+eum_social_waba_id         = "" # waba-... from the End User Messaging Social console; manages the WhatsApp templates (whatsapp_templates.tf)
+whatsapp_calling_enabled   = false # true: patients can call the business number from WhatsApp (whatsapp_calling.tf, CALL-0)
+whatsapp_phone_number_id   = ""                           # Meta phone number ID, only for whatsapp_provider = "meta"
+
+# Stored in Secrets Manager (resq/whatsapp) and injected via the ECS `secrets` block.
+manage_whatsapp_secret_values = true
+whatsapp_verify_token         = "" # empty = random
+whatsapp_app_secret           = "" # optional (Meta X-Hub-Signature-256)
+whatsapp_access_token         = "" # only for the Meta rollback
+
+# ---------------- Amazon Connect ----------------
+create_connect_instance           = false # true = create instance + outbound flow + phone number
+connect_instance_alias            = ""
+connect_phone_number_country_code = "US"
+connect_phone_number_type         = "DID"
+# Used when create_connect_instance = false:
+connect_instance_id             = "00000000-0000-0000-0000-000000000000"
+emergency_contact_phone_flow_id = "00000000-0000-0000-0000-000000000000"
+connect_source_phone_number     = "+18005550199"
+
+# ---------------- Doctor offers and no-doctor alerts ----------------
+# ESI 1-2: this many free doctors per round, 60 s each, until nobody is left (ESI 3: one, 5 min).
+doctor_offer_fanout_urgent = 3
+# Administrators called (Amazon Connect) when an ESI 1-2 case has no doctor; empty = portal alert only.
+admin_alert_phone_numbers  = [] # e.g. ["+923001234567"]
+admin_alert_repeat_seconds = 300
+admin_alert_max_calls      = 3
+
+# ---------------- Doctors on WhatsApp ----------------
+doctor_whatsapp_relay_enabled = true # doctors chat with the patient through the ResQ number, "@resq ..." commands
+
+# ---------------- Portal ----------------
+portal_base_url = "" # empty = https://<CloudFront domain>
+
+# ---------------- Cognito ----------------
+cognito_domain_prefix       = "" # empty = resq-portal-<random suffix>
+cognito_extra_callback_urls = ["http://localhost:5173/"]
+
+# ---------------- Bedrock AgentCore ----------------
+agentcore_runtime_name      = "resq_triage"
+agentcore_network_mode      = "PUBLIC"
+gateway_lambda_zip_path     = "../backend/build/gateway_tools.zip"
+gateway_tool_schema_path    = "../backend/gateway_tools/tool_schemas.json"
+gateway_lambda_runtime      = "python3.13"
+gateway_lambda_architecture = "x86_64" # must match how build_gateway_lambda.py installed the deps
+gateway_lambda_timeout      = 30
+gateway_lambda_memory       = 512
+
+# ---------------- Networking ----------------
+enable_vpc_endpoints        = true
+interface_endpoint_services = ["bedrock-runtime", "transcribe", "ecr.api", "ecr.dkr", "logs", "secretsmanager", "sqs", "sns"]

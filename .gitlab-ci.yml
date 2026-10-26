@@ -1,0 +1,97 @@
+# AWS access is OIDC through resq-gitlab-ci-deploy, which only trusts this project on main.
+# AWS_ACCOUNT_ID is a project CI/CD variable (Settings > CI/CD > Variables), kept out of the repo.
+
+stages:
+  - build
+  - deploy
+
+variables:
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_ROLE_ARN: arn:aws:iam::${AWS_ACCOUNT_ID}:role/resq-gitlab-ci-deploy
+  AWS_WEB_IDENTITY_TOKEN_FILE: /tmp/web_identity_token
+  ECR_REGISTRY: ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+
+default:
+  tags: [docker_spot_runner]
+  id_tokens:
+    AWS_ID_TOKEN:
+      aud: sts.amazonaws.com
+  before_script:
+    - echo "$AWS_ID_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"
+
+.on_backend_change:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes: [backend/**/*, .gitlab-ci.yml]
+
+.on_frontend_change:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      changes: [frontend/**/*, .gitlab-ci.yml]
+
+build:
+  extends: .on_backend_change
+  stage: build
+  image: docker:28.5.2-cli
+  services: [docker:28.5.2-dind]
+  variables:
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_TLS_VERIFY: "1"
+    DOCKER_CERT_PATH: /certs/client
+  parallel:
+    matrix:
+      - REPO: resq-backend
+        DOCKERFILE: backend/Dockerfile
+      - REPO: resq-agentcore-runtime
+        DOCKERFILE: backend/agent_runtime/Dockerfile
+  script:
+    - apk add --no-cache aws-cli
+    - aws ecr get-login-password | docker login -u AWS --password-stdin "$ECR_REGISTRY"
+    # amd64 runners, arm64 images
+    - docker run --privileged --rm tonistiigi/binfmt:qemu-v10.2.3 --install arm64
+    - docker context create dind
+    - docker buildx create --use dind
+    - docker buildx build --platform linux/arm64 --provenance=false -f "$DOCKERFILE"
+      -t "$ECR_REGISTRY/$REPO:$CI_COMMIT_SHORT_SHA" -t "$ECR_REGISTRY/$REPO:latest" --push backend
+
+deploy:
+  extends: .on_backend_change
+  stage: deploy
+  image:
+    name: amazon/aws-cli:2.37.2
+    entrypoint: [""]
+  environment: production
+  resource_group: production
+  script:
+    - aws ecs update-service --cluster resq-ai-cluster --service resq-api-service --force-new-deployment > /dev/null
+    - aws ecs update-service --cluster resq-ai-cluster --service resq-worker-service --force-new-deployment > /dev/null
+    - aws ecs wait services-stable --cluster resq-ai-cluster --services resq-api-service resq-worker-service
+
+# Builds the portal with the Cognito settings Terraform keeps in SSM, uploads it and invalidates
+# CloudFront. Runs after the ECS deploy when both changed, so the new portal never calls an API
+# that is not live yet.
+deploy-portal:
+  extends: .on_frontend_change
+  stage: deploy
+  image: node:22-alpine
+  needs:
+    - job: deploy
+      optional: true
+  environment: production
+  resource_group: production-portal
+  script:
+    - apk add --no-cache aws-cli
+    - aws ssm get-parameter --name /resq/ci/portal-deploy --query Parameter.Value --output text > /tmp/portal.json
+    - cd frontend
+    - node -e 'const c = require("/tmp/portal.json"); console.log(Object.entries(c.build_env).map(([k, v]) => k + "=" + v).join("\n"))' > .env.production
+    - cat .env.production
+    - npm ci
+    - npm run build
+    - BUCKET=$(node -p 'require("/tmp/portal.json").bucket')
+    - DISTRIBUTION=$(node -p 'require("/tmp/portal.json").distribution_id')
+    # Hashed assets first, then the rest (index.html), then remove what the new build dropped.
+    - aws s3 sync dist/assets "s3://$BUCKET/assets"
+    - aws s3 sync dist/ "s3://$BUCKET" --delete
+    - INVALIDATION=$(aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" --paths "/*" --query Invalidation.Id --output text)
+    - aws cloudfront wait invalidation-completed --distribution-id "$DISTRIBUTION" --id "$INVALIDATION"

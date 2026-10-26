@@ -1,0 +1,4 @@
+# Copy to backend.hcl (gitignored), then: terraform init -backend-config=backend.hcl
+bucket = "resq-ai-tfstate-<ACCOUNT_ID>-us-east-1"
+key    = "resq-ai/hackathon/terraform.tfstate"
+region = "us-east-1"

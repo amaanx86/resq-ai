@@ -1,0 +1,42 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "102290129340398",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15550783881",
+              "phone_number_id": "106540352242922"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Ahmed Khan"
+                },
+                "wa_id": "923001234567"
+              }
+            ],
+            "messages": [
+              {
+                "from": "923001234567",
+                "id": "wamid.HBgMOTIzMDAxMjM0NTY3FQIAEhgUM0E4RjcyQjJCMDI1QkU2NzI0QTcA",
+                "timestamp": "1791716400",
+                "type": "audio",
+                "audio": {
+                  "mime_type": "audio/ogg; codecs=opus",
+                  "sha256": "pHtVjZ1Ua1lN1dZ3b0b0m4GN7sfmB7bWb3MRMrJcE0c=",
+                  "id": "1048234539876154",
+                  "voice": true
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}

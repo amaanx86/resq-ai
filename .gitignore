@@ -1,0 +1,60 @@
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+backend/.env
+frontend/.env.local
+*.pem
+*.key
+*.p12
+.claude/settings.local.json
+
+# Terraform (keep .terraform.lock.hcl committed)
+terraform/backend.hcl
+terraform/*.tfvars
+terraform/*.tfvars.json
+!terraform/terraform.tfvars.example
+**/.terraform/
+terraform/.terraform.lock.hcl.bak
+*.tfstate
+*.tfstate.*
+tfplan
+*.tfplan
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+crash.log
+crash.*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+backend/build/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+npm-debug.log*
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Original planning document (kept locally, not tracked)
+ResQ-AI-Technical-Plan.docx
+video/

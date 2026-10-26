@@ -1,0 +1,20 @@
+{
+  "context": {
+    "MetaWabaIds": [
+      {
+        "wabaId": "102290129340398",
+        "arn": "arn:aws:social-messaging:us-east-1:123456789012:waba/fb2594b8a7974770b128a409e2example"
+      }
+    ],
+    "MetaPhoneNumberIds": [
+      {
+        "metaPhoneNumberId": "106540352242922",
+        "arn": "arn:aws:social-messaging:us-east-1:123456789012:phone-number-id/976c72a700aac43eaf573ae050example"
+      }
+    ]
+  },
+  "whatsAppWebhookEntry": "{\"id\": \"102290129340398\", \"changes\": [{\"value\": {\"messaging_product\": \"whatsapp\", \"metadata\": {\"display_phone_number\": \"15550783881\", \"phone_number_id\": \"106540352242922\"}, \"contacts\": [{\"profile\": {\"name\": \"Ahmed Khan\"}, \"wa_id\": \"923001234567\"}], \"messages\": [{\"from\": \"923001234567\", \"id\": \"wamid.HBgMOTIzMDAxMjM0NTY3FQIAEhgUM0FCNjE5RTI3QzQwRDhDNTY5QjEA\", \"timestamp\": \"1791716442\", \"type\": \"text\", \"text\": {\"body\": \"Mere uncle ko dil ka daura par raha hai, please jaldi ambulance bhejein!\"}}]}, \"field\": \"messages\"}]}",
+  "aws_account_id": "123456789012",
+  "message_timestamp": "2026-10-11T11:00:43.118402771Z",
+  "messageId": "9b1e4c2a-7d3f-4a60-8e2b-1f5c9d8a7e01"
+}

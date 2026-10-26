@@ -1,0 +1,47 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "102290129340398",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15550783881",
+              "phone_number_id": "106540352242922"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Ahmed Khan"
+                },
+                "wa_id": "923001234567"
+              }
+            ],
+            "messages": [
+              {
+                "context": {
+                  "from": "15550783881",
+                  "id": "wamid.HBgMOTIzMDAxMjM0NTY3FQIAERgSMDk4QkM1RTc2RkE0N0I5QjUA"
+                },
+                "from": "923001234567",
+                "id": "wamid.HBgMOTIzMDAxMjM0NTY3FQIAEhgUM0FBQ0U3RDZFNEM4QjE2MjUxOEEA",
+                "timestamp": "1791716510",
+                "type": "interactive",
+                "interactive": {
+                  "type": "button_reply",
+                  "button_reply": {
+                    "id": "OFFER:DECLINE:CASE-1A2B3C4D5E:OFR-0001",
+                    "title": "Decline"
+                  }
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SUDO visual identity (tailwind.config.js): navy-led, neutral surfaces, Poppins headings. */
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    @apply bg-canvas font-sans text-ink;
+  }
+  h1, h2, h3 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  /* Surfaces */
+  .card {
+    @apply rounded-xl border border-slate-200/80 bg-white shadow-card;
+  }
+  .card-header {
+    @apply flex items-center justify-between gap-3 border-b border-slate-200/80 px-5 py-3.5;
+  }
+  .card-title {
+    @apply font-display text-sm font-semibold text-brand-900;
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-wider text-slate-500;
+  }
+
+  /* Buttons: navy primary, quiet secondary; red only for destructive actions. */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2
+      disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-sm {
+    @apply px-2.5 py-1.5 text-xs;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white shadow-sm hover:bg-brand-700;
+  }
+  .btn-secondary {
+    @apply border border-slate-300 bg-white text-slate-700 shadow-sm hover:border-brand-300 hover:bg-brand-50 hover:text-brand-800;
+  }
+  /* Positive confirmations (accept a case, send): the brand navy, not a second colour. */
+  .btn-success {
+    @apply bg-brand-600 text-white shadow-sm hover:bg-brand-700;
+  }
+  .btn-ghost {
+    @apply text-slate-500 hover:bg-slate-100 hover:text-brand-800;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white shadow-sm hover:bg-red-700;
+  }
+  .btn-danger-ghost {
+    @apply text-red-700 hover:bg-red-50 hover:text-red-800;
+  }
+  .link {
+    @apply font-medium text-brand-600 hover:text-brand-800;
+  }
+
+  /* Forms */
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-slate-700;
+  }
+  .hint {
+    @apply mt-1 block text-xs text-slate-500;
+  }
+  .input {
+    @apply block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-ink shadow-sm
+      placeholder:text-slate-400 focus:border-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-500/20;
+  }
+
+  /* Switches (on duty, alert calls) */
+  .switch {
+    @apply relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2
+      disabled:opacity-60;
+  }
+  .switch-on {
+    @apply bg-brand-600;
+  }
+  .switch-off {
+    @apply bg-slate-300;
+  }
+  .switch-knob {
+    @apply inline-block h-5 w-5 rounded-full bg-white shadow transition-transform;
+  }
+
+  /* Notices */
+  .notice {
+    @apply flex items-start gap-2 rounded-lg border p-3 text-sm;
+  }
+  .notice-ok {
+    @apply border-brand-200 bg-brand-50 text-brand-900;
+  }
+  .notice-error {
+    @apply border-red-200 bg-red-50 text-red-800;
+  }
+  .notice-warn {
+    @apply border-amber-200 bg-amber-50 text-amber-900;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset;
+  }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  background-clip: content-box;
+}

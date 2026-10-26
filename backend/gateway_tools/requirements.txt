@@ -1,0 +1,8 @@
+# Runtime dependencies of the Gateway Lambda (bundled by backend/scripts/build_gateway_lambda.py).
+# Only what app.agents.tools and the services it imports need; no FastAPI, no Strands.
+pydantic>=2.10.0
+pydantic-settings>=2.6.0
+python-dotenv>=1.0.0
+httpx>=0.28.0
+boto3>=1.35.0
+botocore>=1.35.0
